@@ -1,0 +1,88 @@
+#######_________Animating Your Data Visualizations Using ggplot2 and plotly in R_________#######
+## Data di download di https://drive.google.com/file/d/1kp9q5vkLX_-YSa-nL8RzN38LVd8syrs_/view
+
+## Package yang digunakan
+library(openxlsx) # digunakan untuk memanggil data dalam Microsoft Excel.
+library(plotly) # digunakan untuk membuat grafik web interaktif
+library(ggplot2) # digunakan untuk visualisasi data yang elegan menggunakan Grammar of Graphics
+
+## Input data 
+gapminder <- read.xlsx("...//gapminder.xlsx", sheet = 1, startRow = 1, colNames = TRUE)
+View(gapminder)
+
+## Mengambil varibel
+country.vec <- gapminder [,1]
+country.vec
+
+## Membuat pengulangan variabel panel (replikasi)
+country_panel <- c()
+for (i in 1:170) {
+  x = rep(country.vec[i], 47)
+  country_panel <- append(country_panel, x)
+}
+View(country_panel)
+
+years_panel <- rep(1970:2016, 170)
+years_panel
+
+## Mengambil data pada variabel gdp
+gdp_panel <- c()
+for (i in 1:170) {
+ x = gapminder[i,]
+ x =  x[-c(1:3)]
+ x = t(x)
+gdp_panel <- append(gdp_panel, x)
+}
+gdp_panel
+
+## Mengambil data untuk sheet populasi
+gapminder1 <- read.xlsx("...//gapminder.xlsx", sheet = 2, startRow = 1, colNames = TRUE)
+View(gapminder1)
+
+pop_panel <- c()
+for (i in 1:170) {
+  x = gapminder1[i,]
+  x =  x[-c(1:3)]
+  x = t(x)
+  pop_panel <- append(pop_panel, x)
+}
+pop_panel
+
+## Mengambil data untuk sheet 3
+
+gapminder2 <- read.xlsx("...//gapminder.xlsx", sheet = 3, startRow = 1, colNames = TRUE)
+View(gapminder2)
+
+life_panel <- c()
+for (i in 1:170) {
+  x = gapminder2[i,]
+  x =  x[-c(1:3)]
+  x = t(x)
+  life_panel <- append(life_panel, x)
+}
+life_panel
+
+## Mengambil varialbel region
+gapminder3 <- read.xlsx("...//gapminder.xlsx", sheet = 4, startRow = 1, colNames = TRUE)
+View(gapminder3)
+
+region.vec <- gapminder3 [,6]
+region.vec
+
+region_panel <- c()
+for (i in 1:170) {
+  x = rep(region.vec[i], 47)
+  region_panel <- append(region_panel, x)
+}
+View(region_panel)
+
+## Membuat data frame 
+gapminder_frame <- data.frame(region_panel,country_panel, years_panel, gdp_panel, pop_panel, life_panel)
+View(gapminder_frame)
+
+## Membuat visual dengan plotly
+gap <- ggplot(gapminder_frame, aes(x = log(gdp_panel), y = life_panel, color = country_panel)) + geom_point(aes(shape = region_panel,size = pop_panel,frame = years_panel))
+gap
+ggplotly(gap)
+
+##____Salsabila Basalamah___##
